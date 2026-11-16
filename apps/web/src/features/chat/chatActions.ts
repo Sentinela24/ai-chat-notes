@@ -69,6 +69,8 @@ async function streamReply(history: ChatMessage[]): Promise<void> {
           break;
         case 'done':
           buffer.flush();
+          // After a refusal fallback the reply may come from a different model than `start` named.
+          if (event.model) store.setModel(id, event.model);
           store.finishMessage(id, event.stopReason);
           return;
         case 'error':

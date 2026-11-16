@@ -12,7 +12,8 @@ export interface CompletionParams {
 
 /** What a provider yields. The route adds the `start` event and maps thrown errors to `error`. */
 export type ProviderEvent =
-  { type: 'delta'; text: string } | { type: 'done'; stopReason: StopReason; usage?: Usage };
+  | { type: 'delta'; text: string }
+  | { type: 'done'; stopReason: StopReason; usage?: Usage; model?: string };
 
 /**
  * The seam that makes providers swappable. Each adapter turns its SDK's own

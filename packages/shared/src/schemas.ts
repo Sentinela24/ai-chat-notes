@@ -74,6 +74,8 @@ export const StreamEventSchema = z.discriminatedUnion('type', [
     type: z.literal('done'),
     stopReason: StopReasonSchema,
     usage: UsageSchema.optional(),
+    /** The model that actually produced the reply (can differ from `start` after a fallback). */
+    model: z.string().optional(),
   }),
   z.object({
     type: z.literal('error'),
