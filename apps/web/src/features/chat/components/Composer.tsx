@@ -70,8 +70,11 @@ export const Composer = forwardRef<HTMLTextAreaElement, ComposerProps>(function 
         Press Enter to send, Shift+Enter for a new line
         {isStreaming ? ', Escape to stop the current reply' : ''}.
       </span>
+      {/* Distinct keys: without them React reuses one <button> for both, and focus
+          would stay on a now-disabled "Send" after stopping. */}
       {isStreaming ? (
         <IconButton
+          key="stop"
           type="submit"
           variant="secondary"
           size="md"
@@ -81,6 +84,7 @@ export const Composer = forwardRef<HTMLTextAreaElement, ComposerProps>(function 
         />
       ) : (
         <IconButton
+          key="send"
           type="submit"
           variant="primary"
           size="md"

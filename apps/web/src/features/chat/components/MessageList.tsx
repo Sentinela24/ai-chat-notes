@@ -53,7 +53,11 @@ export function MessageList({
             size="sm"
             className="pointer-events-auto rounded-full shadow-md"
             icon={<ArrowDown className="size-3.5" aria-hidden />}
-            onClick={() => scrollToBottom('smooth')}
+            onClick={() =>
+              scrollToBottom(
+                window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+              )
+            }
           >
             Jump to latest
           </Button>

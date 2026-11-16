@@ -58,7 +58,9 @@ export function NotesView() {
   if (!active) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-3 p-6 text-center">
-        <p className="text-lg font-medium">No notes yet</p>
+        <h2 id="view-heading" tabIndex={-1} className="text-lg font-medium focus:outline-none">
+          No notes yet
+        </h2>
         <p className="max-w-sm text-sm text-muted">
           Create a note, or use “Save to notes” on any chat reply.
         </p>
@@ -94,6 +96,9 @@ export function NotesView() {
 
       <section aria-label="Editor" className="min-h-0 overflow-y-auto">
         <div className="mx-auto flex max-w-3xl flex-col gap-3 px-4 py-4">
+          <h2 id="view-heading" tabIndex={-1} className="sr-only">
+            Notes
+          </h2>
           <label className="sr-only" htmlFor="note-title">
             Note title
           </label>

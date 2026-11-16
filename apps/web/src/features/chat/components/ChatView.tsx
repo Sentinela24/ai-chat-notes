@@ -1,11 +1,12 @@
 import { MessageSquarePlus } from 'lucide-react';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/Button';
 import { useChat } from '../useChat';
+import type { Message } from '../types';
 import { Composer } from './Composer';
 import { MessageBubble } from './MessageBubble';
 import { MessageList } from './MessageList';
-import type { Message } from '../types';
+import { StreamAnnouncer } from './StreamAnnouncer';
 
 export interface ChatViewProps {
   onSaveToNote?: (message: Message) => void;
@@ -18,10 +19,37 @@ export function ChatView({ onSaveToNote }: ChatViewProps) {
   const last = messages.at(-1);
   const contentKey = `${messages.length}:${last?.content.length ?? 0}:${last?.status}`;
 
+  // Escape stops the reply from anywhere in the chat view.
+  useEffect(() => {
+    if (!isStreaming) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !e.defaultPrevented) {
+        e.preventDefault();
+        stop();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isStreaming, stop]);
+
+  // Focus recovery: the Stop button disappears when streaming ends, and a Retry
+  // button disappears when it's clicked. If focus was on either, it would fall
+  // to <body>; send it back to the composer instead.
+  useEffect(() => {
+    const active = document.activeElement;
+    if (!active || active === document.body) composerRef.current?.focus();
+  }, [isStreaming]);
+
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between border-b border-border px-4 py-2">
-        <h2 className="text-sm font-medium text-muted">Chat</h2>
+        <h2
+          id="view-heading"
+          tabIndex={-1}
+          className="text-sm font-medium text-muted focus:outline-none"
+        >
+          Chat
+        </h2>
         <Button
           size="sm"
           variant="ghost"
@@ -40,7 +68,7 @@ export function ChatView({ onSaveToNote }: ChatViewProps) {
         {messages.length === 0 ? (
           <EmptyState />
         ) : (
-          <ol className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-6">
+          <ol aria-label="Conversation" className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-6">
             {messages.map((m) => (
               <li key={m.id}>
                 <MessageBubble
@@ -55,6 +83,8 @@ export function ChatView({ onSaveToNote }: ChatViewProps) {
           </ol>
         )}
       </MessageList>
+
+      <StreamAnnouncer message={last} />
 
       <div className="mx-auto w-full max-w-3xl px-4 pb-4">
         <Composer ref={composerRef} onSend={send} onStop={stop} isStreaming={isStreaming} />
