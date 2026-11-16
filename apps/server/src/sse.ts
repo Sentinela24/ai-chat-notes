@@ -1,7 +1,7 @@
 import type { StreamEvent } from '@acn/shared';
 import type { Context } from 'hono';
 import { streamSSE } from 'hono/streaming';
-import { isAbortError, toErrorEvent } from './providers/errors';
+import { isAbortError, ProviderError, toErrorEvent } from './providers/errors';
 import type { CompletionParams, LLMProvider } from './providers/types';
 
 export const HEARTBEAT_MS = 15_000;
@@ -56,7 +56,12 @@ export function streamCompletion(c: Context, provider: LLMProvider, params: Comp
       }
     } catch (err) {
       if (upstream.signal.aborted || isAbortError(err)) return;
-      console.error(`[${provider.name}] stream failed:`, err);
+      // Known provider failures get one line; anything unexpected gets the full stack.
+      if (err instanceof ProviderError) {
+        console.warn(`[${provider.name}] stream failed (${err.code}): ${err.message}`);
+      } else {
+        console.error(`[${provider.name}] stream failed unexpectedly:`, err);
+      }
       await send(toErrorEvent(err));
     } finally {
       clearInterval(heartbeat);
