@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@plugin '@tailwindcss/typography';
 
 /*
  * Design tokens as CSS variables, exposed to Tailwind via @theme so classes
@@ -68,5 +69,31 @@
   :focus-visible {
     outline: 2px solid var(--c-focus);
     outline-offset: 2px;
+  }
+}
+
+/* Blinking caret after the last streamed block. */
+@layer components {
+  .streaming-caret > :last-child::after {
+    content: '';
+    display: inline-block;
+    width: 0.5em;
+    height: 1em;
+    margin-left: 0.15em;
+    vertical-align: text-bottom;
+    background: currentColor;
+    opacity: 0.6;
+    animation: caret-blink 1s steps(2, start) infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .streaming-caret > :last-child::after {
+      animation: none;
+    }
+  }
+}
+
+@keyframes caret-blink {
+  to {
+    visibility: hidden;
   }
 }
