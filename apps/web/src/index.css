@@ -1,0 +1,72 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens as CSS variables, exposed to Tailwind via @theme so classes
+ * like `bg-surface` / `text-muted` work and dark mode is a variable swap.
+ */
+:root {
+  --c-surface: #ffffff;
+  --c-surface-2: #f6f6f7;
+  --c-surface-3: #ececee;
+  --c-fg: #18181b;
+  --c-muted: #63636b;
+  --c-border: #e2e2e5;
+  --c-accent: #4f46e5;
+  --c-accent-fg: #ffffff;
+  --c-danger: #b42318;
+  --c-danger-bg: #fef3f2;
+  --c-focus: #4f46e5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-surface: #111113;
+    --c-surface-2: #1a1a1d;
+    --c-surface-3: #26262a;
+    --c-fg: #ececf0;
+    --c-muted: #a0a0aa;
+    --c-border: #2e2e33;
+    --c-accent: #818cf8;
+    --c-accent-fg: #111113;
+    --c-danger: #fda29b;
+    --c-danger-bg: #2a1413;
+    --c-focus: #a5b4fc;
+  }
+}
+
+@theme inline {
+  --color-surface: var(--c-surface);
+  --color-surface-2: var(--c-surface-2);
+  --color-surface-3: var(--c-surface-3);
+  --color-fg: var(--c-fg);
+  --color-muted: var(--c-muted);
+  --color-border: var(--c-border);
+  --color-accent: var(--c-accent);
+  --color-accent-fg: var(--c-accent-fg);
+  --color-danger: var(--c-danger);
+  --color-danger-bg: var(--c-danger-bg);
+  --color-focus: var(--c-focus);
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    background: var(--c-surface);
+    color: var(--c-fg);
+    font-family:
+      ui-sans-serif,
+      system-ui,
+      -apple-system,
+      'Segoe UI',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--c-focus);
+    outline-offset: 2px;
+  }
+}
