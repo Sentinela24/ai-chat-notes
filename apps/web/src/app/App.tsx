@@ -8,7 +8,7 @@ import { NotesView } from '@/features/notes/components/NotesView';
 import { saveReplyToNotes } from '@/features/notes/saveReply';
 import { useUiStore, type View } from './uiStore';
 
-const VIEWS: { id: View; label: string; icon: React.ReactNode }[] = [
+const tabs: { id: View; label: string; icon: React.ReactNode }[] = [
   { id: 'chat', label: 'Chat', icon: <MessagesSquare className="size-4" aria-hidden /> },
   { id: 'notes', label: 'Notes', icon: <NotebookText className="size-4" aria-hidden /> },
 ];
@@ -40,19 +40,19 @@ export function App() {
       <header className="flex h-12 shrink-0 items-center gap-4 border-b border-border px-4">
         <h1 className="text-sm font-semibold">AI Chat + Notes</h1>
         <nav aria-label="Views" className="flex items-center gap-1">
-          {VIEWS.map((v) => (
+          {tabs.map((t) => (
             <button
-              key={v.id}
+              key={t.id}
               type="button"
-              aria-current={view === v.id ? 'page' : undefined}
-              onClick={() => setView(v.id)}
+              aria-current={view === t.id ? 'page' : undefined}
+              onClick={() => setView(t.id)}
               className={clsx(
                 'inline-flex h-8 items-center gap-1.5 rounded-lg px-3 text-sm transition-colors',
-                view === v.id ? 'bg-surface-3 font-medium text-fg' : 'text-muted hover:text-fg',
+                view === t.id ? 'bg-surface-3 font-medium text-fg' : 'text-muted hover:text-fg',
               )}
             >
-              {v.icon}
-              {v.label}
+              {t.icon}
+              {t.label}
             </button>
           ))}
         </nav>
