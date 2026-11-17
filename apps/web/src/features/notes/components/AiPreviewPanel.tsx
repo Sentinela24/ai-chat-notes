@@ -15,6 +15,28 @@ export interface AiPreviewPanelProps {
 
 const VERB = { summarise: 'Summarising', rewrite: 'Rewriting' } as const;
 
+// The explicit `string` return type makes the switch exhaustive: a new status
+// without a case fails to compile instead of rendering an empty status region.
+function getStatusText({
+  status,
+  action,
+  error,
+  stopReason,
+}: AiPreviewPanelProps['state']): string {
+  switch (status) {
+    case 'streaming':
+      return `${VERB[action]} selection…`;
+    case 'error':
+      return `Suggestion failed: ${error?.message ?? 'unknown error'}`;
+    case 'stopped':
+      return 'Stopped. You can still use the partial suggestion.';
+    case 'done':
+      return stopReason === 'refusal'
+        ? 'The model declined to transform this passage.'
+        : 'Suggestion ready. Replace the selection, insert it below, or discard it.';
+  }
+}
+
 /**
  * Shows a streamed AI suggestion before it touches the document.
  *
@@ -43,16 +65,7 @@ export function AiPreviewPanel({
     else primaryRef.current?.focus();
   }, [status]);
 
-  const statusText =
-    status === 'streaming'
-      ? `${VERB[action]} selection…`
-      : status === 'error'
-        ? `Suggestion failed: ${error?.message ?? 'unknown error'}`
-        : refused
-          ? 'The model declined to transform this passage.'
-          : status === 'stopped'
-            ? 'Stopped. You can still use the partial suggestion.'
-            : 'Suggestion ready. Replace the selection, insert it below, or discard it.';
+  const statusText = getStatusText(state);
 
   return (
     <section
